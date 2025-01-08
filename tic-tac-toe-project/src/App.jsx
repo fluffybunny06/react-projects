@@ -6,6 +6,12 @@ import Log from "./components/Log";
 import GameOver from "./components/GameOver";
 import { WINNING_COMBINATIONS } from "./winning-combinations";
 
+const initialGameBoard = [
+  [null, null, null],
+  [null, null, null],
+  [null, null, null],
+];
+
 function derivedActivePlayer(gameTurns) {
   let curPlayer = "X";
   if (gameTurns.length > 0 && gameTurns[0].player === "X") {
@@ -14,21 +20,7 @@ function derivedActivePlayer(gameTurns) {
   return curPlayer;
 }
 
-const initialGameBoard = [
-  [null, null, null],
-  [null, null, null],
-  [null, null, null],
-];
-
-function App() {
-  const [players, setPlayers] = useState({
-    X: "Player 1",
-    O: "Player 2",
-  });
-  const [gameTurns, setGameTurns] = useState([]);
-  //const [activePlayer, setAcivePlayer] = useState("X");
-  const activePlayer = derivedActivePlayer(gameTurns);
-
+function deriveGameBoard(gameTurns) {
   let gameBoard = [...initialGameBoard.map((array) => [...array])];
   //deep copy
 
@@ -39,6 +31,10 @@ function App() {
     gameBoard[row][col] = player;
   }
 
+  return gameBoard;
+}
+
+function deriveWinner(gameBoard, players) {
   let winner = null;
 
   for (const combo of WINNING_COMBINATIONS) {
@@ -54,6 +50,21 @@ function App() {
       winner = players[firstSquareSymbol];
     }
   }
+  return winner;
+}
+
+function App() {
+  const [players, setPlayers] = useState({
+    X: "Player 1",
+    O: "Player 2",
+  });
+  const [gameTurns, setGameTurns] = useState([]);
+  //const [activePlayer, setAcivePlayer] = useState("X");
+  const activePlayer = derivedActivePlayer(gameTurns);
+
+  const gameBoard = deriveGameBoard(gameTurns);
+
+  const winner = deriveWinner(gameBoard, players);
 
   const hasTie = gameTurns.length === 9 && !winner;
 
